@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AUKAI AI – KI-Assistenten für Ihre Branche</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Design Tokens ─── */
+    :root {
+      --bg:          #F8FAFC;
+      --surface:     #FFFFFF;
+      --blue:        #2563EB;
+      --blue-light:  #DBEAFE;
+      --blue-dark:   #1D4ED8;
+      --ink:         #1E293B;
+      --ink-mid:     #475569;
+      --ink-soft:    #94A3B8;
+      --border:      rgba(30,41,59,.08);
+      --glass-bg:    rgba(255,255,255,.65);
+      --glass-border:rgba(37,99,235,.18);
+      --radius:      16px;
+      --radius-sm:   10px;
+      --shadow-card: 0 4px 24px rgba(30,41,59,.07);
+      --shadow-btn:  0 2px 12px rgba(37,99,235,.30);
+    }
+
+    /* ─── Reset ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── Layout helpers ─── */
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 96px 0; }
+    .section--sm { padding: 64px 0; }
+    .label {
+      display: inline-block;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+    h1,h2,h3,h4 { font-family: 'DM Serif Display', serif; line-height: 1.18; }
+    h1 { font-size: clamp(2.4rem, 5vw, 3.8rem); }
+    h2 { font-size: clamp(1.9rem, 3.5vw, 2.8rem); }
+    h3 { font-size: 1.35rem; font-weight: 400; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 32px;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(248,250,252,.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.35rem;
+      color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-logo span {
+      width: 30px; height: 30px;
+      background: var(--blue);
+      border-radius: 8px;
+      display: grid; place-items: center;
+    }
+    .nav-logo span svg { width: 16px; height: 16px; fill: #fff; }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--ink-mid);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--blue); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 600;
+      padding: 11px 24px;
+      border-radius: var(--radius-sm);
+      cursor: pointer; border: none;
+      transition: all .2s;
+    }
+    .btn-primary {
+      background: var(--blue); color: #fff;
+      box-shadow: var(--shadow-btn);
+    }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(37,99,235,.4); }
+    .btn-ghost {
+      background: transparent; color: var(--ink);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+
+    /* ─── HERO ─── */
+    #hero {
+      padding-top: 160px; padding-bottom: 100px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 70% 40%, rgba(37,99,235,.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 10% 80%, rgba(37,99,235,.04) 0%, transparent 70%);
+    }
+    .hero-grid {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .hero-kicker {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 24px;
+    }
+    .hero-kicker .dot { width: 8px; height: 8px; background: #22C55E; border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+    .hero-kicker span { font-size: .82rem; font-weight: 500; color: var(--ink-mid); }
+    h1 em { font-style: italic; color: var(--blue); }
+    .hero-sub {
+      margin-top: 20px; margin-bottom: 36px;
+      font-size: 1.1rem; color: var(--ink-mid); max-width: 440px;
+      font-weight: 300; line-height: 1.75;
+    }
+    .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-trust {
+      margin-top: 40px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .trust-avatars { display: flex; }
+    .trust-avatars span {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 2px solid var(--bg);
+      background: var(--blue-light);
+      display: grid; place-items: center;
+      font-size: .75rem; font-weight: 600; color: var(--blue);
+      margin-left: -8px;
+    }
+    .trust-avatars span:first-child { margin-left: 0; }
+    .trust-text { font-size: .82rem; color: var(--ink-mid); }
+    .trust-text strong { color: var(--ink); font-weight: 600; }
+
+    /* Demo Chat Card */
+    .hero-demo {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-card), 0 0 0 1px var(--glass-border);
+      overflow: hidden;
+      animation: floatCard 5s ease-in-out infinite;
+    }
+    @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .demo-header {
+      padding: 14px 18px;
+      background: var(--blue);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .demo-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,.2);
+      display: grid; place-items: center;
+    }
+    .demo-avatar svg { width: 16px; height: 16px; fill: #fff; }
+    .demo-title { color: #fff; font-size: .88rem; font-weight: 600; }
+    .demo-sub { color: rgba(255,255,255,.65); font-size: .74rem; }
+    .demo-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ADE80; margin-left: auto; }
+    .demo-body { padding: 20px; display: flex; flex-direction: column; gap: 12px; min-height: 260px; }
+    .msg { max-width: 78%; padding: 10px 14px; border-radius: 12px; font-size: .85rem; line-height: 1.5; }
+    .msg-bot { background: var(--blue-light); color: var(--ink); border-bottom-left-radius: 4px; }
+    .msg-user { background: var(--blue); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+    .msg-typing {
+      background: var(--blue-light); border-bottom-left-radius: 4px;
+      padding: 12px 14px; display: inline-flex; gap: 4px; align-items: center;
+    }
+    .msg-typing span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--blue); opacity: .5;
+      animation: blink 1.2s infinite;
+    }
+    .msg-typing span:nth-child(2) { animation-delay: .2s; }
+    .msg-typing span:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink { 0%,80%,100%{opacity:.25}40%{opacity:1} }
+    .demo-input {
+      margin: 0 16px 16px;
+      display: flex; gap: 8px; align-items: center;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 8px 12px;
+    }
+    .demo-input span { font-size: .82rem; color: var(--ink-soft); flex: 1; }
+    .demo-send {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: var(--blue); display: grid; place-items: center; cursor: pointer;
+    }
+    .demo-send svg { width: 14px; height: 14px; fill: #fff; }
+
+    /* ─── LOGOS ─── */
+    #logos { padding: 48px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .logos-label { text-align: center; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 28px; }
+    .logos-row {
+      display: flex; justify-content: center; align-items: center; gap: 48px; flex-wrap: wrap;
+    }
+    .logo-pill {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.05rem; color: var(--ink-soft);
+      opacity: .6;
+    }
+
+    /* ─── FEATURES ─── */
+    #features { background: var(--surface); }
+    .features-intro { text-align: center; max-width: 560px; margin: 0 auto 64px; }
+    .features-intro p { color: var(--ink-mid); margin-top: 16px; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feat-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      transition: box-shadow .25s, transform .25s, border-color .25s;
+      position: relative; overflow: hidden;
+    }
+    .feat-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--blue);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s;
+    }
+    .feat-card:hover { box-shadow: var(--shadow-card); transform: translateY(-4px); border-color: var(--glass-border); }
+    .feat-card:hover::before { transform: scaleX(1); }
+    .feat-icon {
+      width: 48px; height: 48px; border-radius: var(--radius-sm);
+      background: var(--blue-light);
+      display: grid; place-items: center; margin-bottom: 20px;
+    }
+    .feat-icon svg { width: 22px; height: 22px; stroke: var(--blue); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .feat-card h3 { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1.05rem; margin-bottom: 10px; }
+    .feat-card p { font-size: .9rem; color: var(--ink-mid); line-height: 1.65; }
+
+    /* ─── USE CASES ─── */
+    #usecases { background: var(--bg); }
+    .uc-intro { text-align: center; max-width: 580px; margin: 0 auto 64px; }
+    .uc-intro p { color: var(--ink-mid); margin-top: 16px; }
+    .uc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .uc-card {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .uc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
+    .uc-card-top {
+      padding: 28px 24px 22px;
+      background: linear-gradient(135deg, var(--blue) 0%, #1D4ED8 100%);
+      position: relative; overflow: hidden;
+    }
+    .uc-card-top::after {
+      content: '';
+      position: absolute; bottom: -24px; right: -24px;
+      width: 100px; height: 100px; border-radius: 50%;
+      background: rgba(255,255,255,.06);
+    }
+    .uc-emoji { font-size: 2rem; margin-bottom: 10px; }
+    .uc-card-top h3 { font-family: 'DM Serif Display', serif; color: #fff; font-size: 1.3rem; }
+    .uc-card-top p { color: rgba(255,255,255,.72); font-size: .83rem; margin-top: 4px; }
+    .uc-card-body { padding: 22px 24px; }
+    .uc-points { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .uc-points li {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: .875rem; color: var(--ink-mid);
+    }
+    .uc-points li::before {
+      content: ''; flex-shrink: 0;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--blue-light);
+      display: grid; place-items: center;
+      margin-top: 1px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: center;
+    }
+
+    /* ─── HOW IT WORKS ─── */
+    #how { background: var(--surface); }
+    .how-intro { text-align: center; max-width: 520px; margin: 0 auto 64px; }
+    .how-intro p { color: var(--ink-mid); margin-top: 16px; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; position: relative; }
+    .steps::before {
+      content: '';
+      position: absolute; top: 28px; left: 12.5%; right: 12.5%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue-light), var(--blue-light), transparent);
+    }
+    .step { text-align: center; padding: 0 16px; }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--surface); border: 1.5px solid var(--glass-border);
+      display: grid; place-items: center; margin: 0 auto 20px;
+      font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--blue);
+      box-shadow: 0 0 0 6px var(--blue-light);
+      position: relative; z-index: 1;
+    }
+    .step h4 { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .95rem; margin-bottom: 8px; }
+    .step p { font-size: .84rem; color: var(--ink-mid); }
+
+    /* ─── PRICING ─── */
+    #pricing { background: var(--bg); }
+    .pricing-intro { text-align: center; max-width: 520px; margin: 0 auto 56px; }
+    .pricing-intro p { color: var(--ink-mid); margin-top: 16px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+    .plan {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 30px;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .plan:hover { transform: translateY(-4px); }
+    .plan--featured {
+      background: var(--ink);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 12px 40px rgba(30,41,59,.25);
+      position: relative;
+    }
+    .plan--featured::before {
+      content: 'Beliebteste Wahl';
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--blue); color: #fff;
+      font-size: .72rem; font-weight: 600; letter-spacing: .06em;
+      padding: 4px 16px; border-radius: 999px;
+    }
+    .plan-name { font-size: .8rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+    .plan--featured .plan-name { color: rgba(255,255,255,.5); }
+    .plan-price { font-family: 'DM Serif Display', serif; font-size: 3rem; line-height: 1; }
+    .plan-price sub { font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 400; }
+    .plan-price span { font-family: 'DM Sans', sans-serif; font-size: .85rem; color: var(--ink-soft); font-weight: 400; }
+    .plan--featured .plan-price span { color: rgba(255,255,255,.45); }
+    .plan-desc { margin: 12px 0 24px; font-size: .875rem; color: var(--ink-mid); }
+    .plan--featured .plan-desc { color: rgba(255,255,255,.6); }
+    .plan-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+    .plan--featured .plan-divider { background: rgba(255,255,255,.1); }
+    .plan-feats { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .plan-feats li { display: flex; align-items: center; gap: 10px; font-size: .875rem; }
+    .plan-feats li::before {
+      content: '✓'; flex-shrink: 0; width: 20px; height: 20px;
+      border-radius: 50%; background: var(--blue-light); color: var(--blue);
+      display: grid; place-items: center; font-size: .75rem; font-weight: 700;
+    }
+    .plan--featured .plan-feats li::before { background: rgba(255,255,255,.15); color: #fff; }
+    .btn-white { background: #fff; color: var(--ink); }
+    .btn-white:hover { background: var(--blue-light); color: var(--blue); }
+
+    /* ─── TESTIMONIAL ─── */
+    #testimonials { background: var(--surface); }
+    .testi-intro { text-align: center; max-width: 480px; margin: 0 auto 56px; }
+    .testi-intro p { color: var(--ink-mid); margin-top: 16px; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .testi-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px 24px;
+    }
+    .testi-stars { color: #FBBF24; font-size: 1rem; margin-bottom: 14px; letter-spacing: 2px; }
+    .testi-card blockquote { font-size: .9rem; color: var(--ink-mid); line-height: 1.7; font-style: italic; }
+    .testi-person { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+    .testi-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--blue-light); display: grid; place-items: center;
+      font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--blue);
+    }
+    .testi-name { font-weight: 600; font-size: .875rem; }
+    .testi-role { font-size: .78rem; color: var(--ink-soft); }
+
+    /* ─── CTA ─── */
+    #cta {
+      background: linear-gradient(135deg, var(--ink) 0%, #0F172A 100%);
+      padding: 96px 0; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute; top: -40%; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,.18) 0%, transparent 65%);
+    }
+    #cta .container { position: relative; z-index: 1; }
+    #cta h2 { color: #fff; max-width: 600px; margin: 0 auto 20px; }
+    #cta p { color: rgba(255,255,255,.55); max-width: 460px; margin: 0 auto 40px; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .cta-note { margin-top: 20px; font-size: .8rem; color: rgba(255,255,255,.35); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--ink); border-top: 1px solid rgba(255,255,255,.06);
+      padding: 48px 0 32px;
+    }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand { font-family: 'DM Serif Display', serif; color: #fff; font-size: 1.3rem; margin-bottom: 12px; }
+    .footer-tagline { font-size: .83rem; color: rgba(255,255,255,.4); line-height: 1.65; max-width: 240px; }
+    .footer-col h5 { color: rgba(255,255,255,.5); font-size: .73rem; letter-spacing: .1em; text-transform: uppercase; font-family: 'DM Sans', sans-serif; font-weight: 600; margin-bottom: 16px; }
+    .footer-col a { display: block; color: rgba(255,255,255,.6); font-size: .85rem; margin-bottom: 10px; transition: color .2s; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(255,255,255,.07); padding-top: 24px;
+      font-size: .8rem; color: rgba(255,255,255,.3);
+    }
+
+    /* ─── Accessibility focus ─── */
+    :focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 1024px) {
+      .features-grid, .uc-grid, .pricing-grid, .testi-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .steps::before { display: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 720px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-demo { display: none; }
+      .features-grid, .uc-grid, .pricing-grid, .testi-grid, .steps { grid-template-columns: 1fr; }
+      .nav-links a:not(.btn) { display: none; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Scroll animations ─── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+
+</head>
+<body>
+
+<!-- ════════════ NAV ════════════ -->
+
+<nav aria-label="Hauptnavigation">
+  <a class="nav-logo" href="#hero" aria-label="NicheBot Startseite">
+    <span>
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+    </span>
+    NicheBot
+  </a>
+  <div class="nav-links">
+    <a href="#features">Funktionen</a>
+    <a href="#usecases">Anwendungen</a>
+    <a href="#pricing">Preise</a>
+    <a href="#cta" class="btn btn-primary">Jetzt starten</a>
+  </div>
+</nav>
+
+<!-- ════════════ HERO ════════════ -->
+
+<section id="hero" aria-labelledby="hero-title">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="container">
+    <div class="hero-grid">
+
+```
+  <!-- LEFT -->
+  <div>
+    <div class="hero-kicker">
+      <div class="dot" aria-hidden="true"></div>
+      <span>KI-Assistenten für spezialisierte Branchen</span>
+    </div>
+
+    <h1 id="hero-title">
+      Ihr Betrieb.<br>
+      <em>Immer erreichbar.</em><br>
+      Immer kompetent.
+    </h1>
+
+    <p class="hero-sub">
+      AUKAI AI liefert branchenspezifische KI-Assistenten für Hausverwaltungen, Yachthäfen und Sportveranstaltungen – einsatzbereit in 48 Stunden, ohne Programmierkenntnisse.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#cta" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Kostenlos testen
+      </a>
+      <a href="#how" class="btn btn-ghost">So funktioniert es</a>
+    </div>
+
+    <div class="hero-trust" aria-label="Bereits 200+ Unternehmen vertrauen NicheBot">
+      <div class="trust-avatars" aria-hidden="true">
+        <span>HV</span><span>YC</span><span>SE</span><span>+</span>
+      </div>
+      <p class="trust-text"><strong>erste Unternehmen</strong> vertrauen bereits auf AUKAI AI</p>
+    </div>
+  </div>
+
+  <!-- RIGHT – Demo Chat -->
+  <div role="img" aria-label="Interaktive Demo des AUKAI AI KI-Assistenten">
+    <div class="hero-demo">
+      <div class="demo-header">
+        <div class="demo-avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        </div>
+        <div>
+          <div class="demo-title">Hafenassistent – CYC Crefelder Yacht Club</div>
+          <div class="demo-sub">Online · Antwortet sofort</div>
+        </div>
+        <div class="demo-dot" aria-hidden="true"></div>
+      </div>
+      <div class="demo-body" aria-live="polite">
+        <div class="msg msg-bot">Guten Tag! Wie kann ich Ihnen heute helfen? 🚢</div>
+        <div class="msg msg-user">Haben Sie noch einen Liegeplatz für 12 m ab Freitag?</div>
+        <div class="msg msg-bot">Ja, wir haben aktuell 3 freie Liegeplätze ab Freitag, 14 Uhr. Soll ich eine Reservierung für Sie vornehmen?</div>
+        <div class="msg msg-user">Ja bitte, für 4 Nächte.</div>
+        <div class="msg-typing" aria-label="Assistent tippt...">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="demo-input">
+        <span>Ihre Nachricht …</span>
+        <div class="demo-send" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ════════════ LOGOS ════════════ -->
+
+<section id="logos" aria-label="Partner und Kunden">
+  <div class="container">
+    <p class="logos-label">Vertraut von Unternehmen in ganz Deutschland</p>
+    <div class="logos-row">
+      <span class="logo-pill">CYC Crefelder Yacht Club</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FEATURES ════════════ -->
+
+<section id="features" class="section" aria-labelledby="features-title">
+  <div class="container">
+    <div class="features-intro reveal">
+      <span class="label">Funktionen</span>
+      <h2 id="features-title">Alles, was Ihr Betrieb braucht</h2>
+      <p>Von automatisierten 24/7 Antworten auf die Fragen Ihrer Kunden bis zu mehrsprachiger Gästebetreuung – AUKAI AI übernimmt die Routinearbeit, damit Ihr Team sich auf das Wesentliche konzentrieren kann.</p>
+    </div>
+
+```
+<div class="features-grid">
+  <!-- 1 -->
+  <div class="feat-card reveal">
+    <div class="feat-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    </div>
+    <h3>24/7 Verfügbarkeit</h3>
+    <p>Ihr Assistent antwortet rund um die Uhr – auch nachts, an Wochenenden und Feiertagen. Keine Warteschleifen, keine verpassten Anfragen.</p>
+  </div>
+  <!-- 2 -->
+  <div class="feat-card reveal">
+    <div class="feat-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    <h3>Mehrsprachige Unterstützung</h3>
+    <p>Kommunizieren Sie mühelos mit internationalen Gästen und Partnern in über 30 Sprachen – ohne zusätzliche Übersetzungskosten.</p>
+  </div>
+  <!-- 3 -->
+  <div class="feat-card reveal">
+    <div class="feat-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </div>
+    <h3>Branchenspezifisches Wissen</h3>
+    <p>Jeder Bot wird mit dem spezifischen Fachjargon, Ihren Preislisten und internen Prozessen trainiert – kein Allzweck-Chatbot, sondern ein echter Spezialist.</p>
+  </div>
+  <!-- 4 -->
+  <div class="feat-card reveal">
+    <div class="feat-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    </div>
+    <h3>Nahtlose Integration</h3>
+    <p>Einbettung per einfachem Code-Snippet in jede Website – Carrd, WordPress, oder Ihre individuelle Lösung. Setup in unter 10 Minuten.</p>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ════════════ USE CASES ════════════ -->
+
+<section id="usecases" class="section" aria-labelledby="usecases-title">
+  <div class="container">
+    <div class="uc-intro reveal">
+      <span class="label">Anwendungsgebiete</span>
+      <h2 id="usecases-title">Gemacht für Ihre Branche</h2>
+      <p>Spezialisierte Assistenten, die die spezifischen Herausforderungen Ihres Alltags verstehen und lösen.</p>
+    </div>
+
+```
+<div class="uc-grid">
+  <!-- Hausverwaltung -->
+  <div class="uc-card reveal">
+    <div class="uc-card-top">
+      <div class="uc-emoji" aria-hidden="true">🏢</div>
+      <h3>Hausverwaltung</h3>
+      <p>Für Immobilienverwalter & WEG-Verwaltungen</p>
+    </div>
+    <div class="uc-card-body">
+      <ul class="uc-points">
+        <li>Automatisierte Terminbuchung bei Aus- oder Einzügen</li>
+        <li>Mieteranfragen zu Nebenkosten und Verträgen beantworten</li>
+        <li>Wichtige Informationen zu aktuellen Ereignissen, wie z.B. einen Heizungsausfall in wenigen Minuten integriert</li>
+      </ul>
+    </div>
+  </div>
+  <!-- Sportevents -->
+  <div class="uc-card reveal">
+    <div class="uc-card-top">
+      <div class="uc-emoji" aria-hidden="true">🏆</div>
+      <h3>Sportveranstaltungen</h3>
+      <p>Für Veranstalter & Sportvereine</p>
+    </div>
+    <div class="uc-card-body">
+      <ul class="uc-points">
+        <li>Fragen zu Parcours, Startzeiten und Regeln beantworten</li>
+        <li>Mehrsprachige Kommunikation für internationale Teilnehmer</li>
+        <li>Einfache Integration von Updates zu Ergebnissen und Programmänderungen</li>
+      </ul>
+    </div>
+  </div>
+  <!-- Yachthäfen -->
+  <div class="uc-card reveal">
+    <div class="uc-card-top">
+      <div class="uc-emoji" aria-hidden="true">⚓</div>
+      <h3>Kleine Yachthäfen</h3>
+      <p>Für Hafenmeis­ter & Marinas</p>
+    </div>
+    <div class="uc-card-body">
+      <ul class="uc-points">
+        <li>Informationen zu Infrastruktur, Strom und Wasser bereitstellen</li>
+        <li>Hafeneinfahrtsinfos kommunizieren</li>
+        <li>Preisauskunft zu Liegeplätzen oder zum Slippen</li>
+      </ul>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ════════════ HOW IT WORKS ════════════ -->
+
+<section id="how" class="section" aria-labelledby="how-title">
+  <div class="container">
+    <div class="how-intro reveal">
+      <span class="label">In 4 Schritten live</span>
+      <h2 id="how-title">So einfach geht's</h2>
+      <p>Von der Anfrage bis zum laufenden Assistenten vergehen keine 48 Stunden. Kein Code, keine IT-Abteilung notwendig.</p>
+    </div>
+
+```
+<div class="steps">
+  <div class="step reveal">
+    <div class="step-num" aria-hidden="true">1</div>
+    <h4>Branche wählen</h4>
+    <p>Wählen Sie Ihren Anwendungsfall aus unserer wachsenden Branchenbibliothek.</p>
+  </div>
+  <div class="step reveal">
+    <div class="step-num" aria-hidden="true">2</div>
+    <h4>Daten einpflegen</h4>
+    <p>Laden Sie Preislisten, FAQs und interne Dokumente hoch – wir trainieren den Bot für Sie.</p>
+  </div>
+  <div class="step reveal">
+    <div class="step-num" aria-hidden="true">3</div>
+    <h4>Design anpassen</h4>
+    <p>Logo, Farben und Begrüßungstext – Ihr Assistent trägt Ihre Corporate Identity.</p>
+  </div>
+  <div class="step reveal">
+    <div class="step-num" aria-hidden="true">4</div>
+    <h4>Einbetten & starten</h4>
+    <p>Ein einziger Code-Schnipsel genügt, um den Bot auf jeder Website live zu schalten.</p>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ════════════ PRICING ════════════ -->
+
+<section id="pricing" class="section" aria-labelledby="pricing-title">
+  <div class="container">
+    <div class="pricing-intro reveal">
+      <span class="label">Preise</span>
+      <h2 id="pricing-title">Transparente Konditionen</h2>
+      <p>Keine versteckten Kosten, monatlich kündbar.</p>
+    </div>
+
+```
+<div class="pricing-grid">
+  <!-- Starter -->
+  <div class="plan reveal">
+    <div class="plan-name">Starter</div>
+    <div class="plan-price">€69<sub>,-</sub> <span>/ Monat</span></div>
+    <p class="plan-desc">Ideal für kleine Betriebe, die erste Schritte mit KI-Assistenz wagen möchten.</p>
+    <div class="plan-divider"></div>
+    <ul class="plan-feats">
+      <li>500 Nachrichten / Monat</li>
+      <li> Alle 30+ Sprachen</li>
+      <li>E-Mail-Support</li>
+      <li>Benutzerdefiniertes Design</li>
+    </ul>
+  </div>
+
+  <!-- Pro (Featured) -->
+  <div class="plan plan--featured reveal">
+    <div class="plan-name">Pro</div>
+    <div class="plan-price" style="color:#fff">€99<sub style="color:rgba(255,255,255,.6)">,-</sub> <span>/ Monat</span></div>
+    <p class="plan-desc">Der ideale Plan für wachsende Betriebe mit hohem Kommunikationsvolumen.</p>
+    <div class="plan-divider"></div>
+    <ul class="plan-feats" style="color:rgba(255,255,255,.8)">
+      <li>5.000 Nachrichten / Monat</li>
+      <li>Alle 30+ Sprachen</li>
+      <li>Prioritäts-Support (24h)</li>
+      <li>Benutzerdefiniertes Design</li>
+    </ul>
+    <a href="#cta" class="btn btn-white" style="width:100%;justify-content:center;">Jetzt starten</a>
+  </div>
+
+  <!-- Set Up Costs -->
+  <div class="plan reveal">
+    <div class="plan-name">einmalige Einrichtungsgebühr</div>
+    <div class="plan-price">ab 449 €</div>
+    <p class="plan-desc">Für die Einrichtung Ihres Spezialisten.</p>
+    <a href="mailto:business_noah@gmx.de" class="btn btn-ghost" style="width:100%;justify-content:center;">Kontakt aufnehmen</a>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ════════════ TESTIMONIALS ════════════ -->
+
+<section id="testimonials" class="section" aria-labelledby="testi-title">
+  <div class="container">
+    <div class="testi-intro reveal">
+      <span class="label">Kundenstimmen</span>
+      <h2 id="testi-title">Was unsere Kunden sagen</h2>
+      <p>Echte Erfahrungen aus dem Alltag.</p>
+    </div>
+
+```
+  <div class="testi-card reveal">
+    <div class="testi-stars" aria-label="5 von 5 Sternen">★★★★★</div>
+    <blockquote>„Unser Hafenassistent übernimmt alle Standardanfragen – auch außerhalb meiner Arbeitszeiten und wenn internationale Gäste einlaufen hilft er mir bei der Sprachbarriere. Setup war in einem Nachmittag erledigt."</blockquote>
+    <div class="testi-person">
+      <div class="testi-avatar" aria-hidden="true">DK</div>
+      <div>
+        <div class="testi-name">Detlef K.</div>
+        <div class="testi-role">Hafenmeister, CYC</div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ════════════ CTA ════════════ -->
+
+<section id="cta" aria-labelledby="cta-title">
+  <div class="container">
+    <span class="label" style="background:rgba(37,99,235,.25);color:#93C5FD">Kostenlos starten</span>
+    <h2 id="cta-title" style="color:#fff;margin-top:8px">Bereit, Ihren Betrieb<br><em style="color:#60A5FA">auf Autopilot</em> zu schalten?</h2>
+    <p>Jetzt kostenloses Erstgespräch vereinbaren.</p>
+    <div class="cta-buttons">
+      <a href="#" class="btn btn-primary" style="font-size:1rem;padding:14px 32px">
+        Ihr Start in die Zukunft!
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="mailto:business_noah@gmx.de" class="btn" style="background:rgba(255,255,255,.1);color:#fff;font-size:1rem;padding:14px 32px;border:1px solid rgba(255,255,255,.15)">
+        Demo vereinbaren
+      </>
+    </div>
+</section>
+
+<!-- ════════════ FOOTER ════════════ -->
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">AUKAI AI</div>
+        <p class="footer-tagline">KI-Assistenten für spezialisierte Branchen. Einfach, sicher und 24/7 verfügbar.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Produkt</h5>
+        <a href="#features">Funktionen</a>
+        <a href="#pricing">Preise</a>
+        <a href="#usecases">Anwendungen</a>
+        <a href="#">Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h5>Unternehmen</h5>
+        <a href="#">Über uns</a>
+      </div>
+      <div class="footer-col">
+        <h5>Rechtliches</h5>
+        <a href="#">Datenschutz</a>
+        <a href="#">Impressum</a>
+        <a href="#">AGB</a>
+        <a href="#">Cookie-Einstellungen</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AUKAI AI · Alle Rechte vorbehalten</span>
+      <span>Made with ♥ in Deutschland 🇩🇪</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════ SCROLL REVEAL ════════════ -->
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transitionDelay = (i * 0.07) + 's';
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
